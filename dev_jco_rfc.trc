@@ -1,0 +1,200 @@
+
+**** Error file opened at 20180810 110619 Korea Standard Time Rel. 3.0.13 (2015-04-27) [721.619]
+Error:  >Fri Aug 10 11:06:19,955<    RfcException:
+    message: Connect to message server host failed
+Connection parameters: TYPE=B DEST=sap_destination_dev MSHOST=114.70.3.51 R3NAME=USD GROUP=PUBLIC PCS=1
+
+LOCATION    CPIC (TCP/IP) on local host blackzac-ext with Unicode
+ERROR       service '?' unknown
+TIME        Fri Aug 10 11:06:19 2018
+RELEASE     721
+COMPONENT   NI (network interface)
+VERSION     40
+RC          -3
+DETAIL      NiErrSet
+COUNTER     2
+
+    return code: RFC_FAILURE (1)
+    error group: 102
+    key: RFC_ERROR_COMMUNICATION
+
+**** Error file opened at 20180810 110904 Korea Standard Time Rel. 3.0.13 (2015-04-27) [721.619]
+Error:  >Fri Aug 10 11:09:04,931<    RfcException:
+    message: Connect to message server host failed
+Connection parameters: TYPE=B DEST=sap_destination_dev MSHOST=114.70.3.51 R3NAME=USD GROUP=PUBLIC PCS=1
+
+LOCATION    CPIC (TCP/IP) on local host blackzac-ext with Unicode
+ERROR       service '?' unknown
+TIME        Fri Aug 10 11:09:04 2018
+RELEASE     721
+COMPONENT   NI (network interface)
+VERSION     40
+RC          -3
+DETAIL      NiErrSet
+COUNTER     2
+
+    return code: RFC_FAILURE (1)
+    error group: 102
+    key: RFC_ERROR_COMMUNICATION
+
+**** Error file opened at 20180810 110921 Korea Standard Time Rel. 3.0.13 (2015-04-27) [721.619]
+Error:  >Fri Aug 10 11:09:21,275<    RfcException:
+    message: Connect to message server host failed
+Connection parameters: TYPE=B DEST=sap_destination_dev MSHOST=114.70.3.51 R3NAME=USD GROUP=PUBLIC PCS=1
+
+LOCATION    CPIC (TCP/IP) on local host blackzac-ext with Unicode
+ERROR       service '?' unknown
+TIME        Fri Aug 10 11:09:21 2018
+RELEASE     721
+COMPONENT   NI (network interface)
+VERSION     40
+RC          -3
+DETAIL      NiErrSet
+COUNTER     2
+
+    return code: RFC_FAILURE (1)
+    error group: 102
+    key: RFC_ERROR_COMMUNICATION
+
+**** Error file opened at 20180810 111014 Korea Standard Time Rel. 3.0.13 (2015-04-27) [721.619]
+Error:  >Fri Aug 10 11:10:14,836<    RfcException:
+    message: Connect to message server host failed
+Connection parameters: TYPE=B DEST=sap_destination_dev MSHOST=114.70.3.51 R3NAME=USD GROUP=PUBLIC PCS=1
+
+LOCATION    CPIC (TCP/IP) on local host blackzac-ext with Unicode
+ERROR       service '?' unknown
+TIME        Fri Aug 10 11:10:14 2018
+RELEASE     721
+COMPONENT   NI (network interface)
+VERSION     40
+RC          -3
+DETAIL      NiErrSet
+COUNTER     2
+
+    return code: RFC_FAILURE (1)
+    error group: 102
+    key: RFC_ERROR_COMMUNICATION
+
+**** Error file opened at 20180810 135030 Korea Standard Time Rel. 3.0.13 (2015-04-27) [721.619]
+Error:  >Fri Aug 10 13:50:30,819<    RfcException:
+    message: Connect to message server host failed
+Connection parameters: TYPE=B DEST=sap_destination_dev MSHOST=114.70.3.51 R3NAME=USD GROUP=PUBLIC PCS=1
+
+LOCATION    CPIC (TCP/IP) on local host blackzac-ext with Unicode
+ERROR       service '?' unknown
+TIME        Fri Aug 10 13:50:30 2018
+RELEASE     721
+COMPONENT   NI (network interface)
+VERSION     40
+RC          -3
+DETAIL      NiErrSet
+COUNTER     2
+
+    return code: RFC_FAILURE (1)
+    error group: 102
+    key: RFC_ERROR_COMMUNICATION
+
+**** Error file opened at 20180810 135045 Korea Standard Time Rel. 3.0.13 (2015-04-27) [721.619]
+Error:  >Fri Aug 10 13:50:45,898<    RfcException:
+    message: Connect to message server host failed
+Connection parameters: TYPE=B DEST=sap_destination_dev MSHOST=114.70.3.50 R3NAME=USD GROUP=PUBLIC PCS=1
+
+LOCATION    CPIC (TCP/IP) on local host blackzac-ext with Unicode
+ERROR       service '?' unknown
+TIME        Fri Aug 10 13:50:45 2018
+RELEASE     721
+COMPONENT   NI (network interface)
+VERSION     40
+RC          -3
+DETAIL      NiErrSet
+COUNTER     2
+
+    return code: RFC_FAILURE (1)
+    error group: 102
+    key: RFC_ERROR_COMMUNICATION
+
+**** Error file opened at 20180810 135341 Korea Standard Time Rel. 3.0.13 (2015-04-27) [721.619]
+Error:  >Fri Aug 10 13:53:41,137<    RfcException:
+    message: Connect to SAP gateway failed
+Connection parameters: TYPE=A DEST=sap_destination_dev ASHOST=114.70.3.51 SYSNR=00 PCS=1
+
+LOCATION    CPIC (TCP/IP) on local host with Unicode
+ERROR       partner '114.70.3.51:3300' not reached
+TIME        Fri Aug 10 13:53:41 2018
+RELEASE     721
+COMPONENT   NI (network interface)
+VERSION     40
+RC          -10
+MODULE      nixxi.cpp
+LINE        3283
+DETAIL      NiPConnect2: 114.70.3.51:3300
+SYSTEM CALL connect
+ERRNO       10060
+ERRNO TEXT  WSAETIMEDOUT: Connection timed out
+COUNTER     2
+
+    return code: RFC_FAILURE (1)
+    error group: 102
+    key: RFC_ERROR_COMMUNICATION
+
+**** Error file opened at 20180816 094628 Korea Standard Time Rel. 3.0.13 (2015-04-27) [721.619]
+Error:  >Thu Aug 16 09:46:28,876<    RfcException:
+    message: Connect to message server host failed
+Connection parameters: TYPE=B DEST=sap_destination MSHOST=114.70.3.46 R3NAME=USP GROUP=PUBLIC_GUI PCS=1
+
+LOCATION    CPIC (TCP/IP) on local host INFRA-02 with Unicode
+ERROR       service '?' unknown
+TIME        Thu Aug 16 09:46:28 2018
+RELEASE     721
+COMPONENT   NI (network interface)
+VERSION     40
+RC          -3
+DETAIL      NiErrSet
+COUNTER     2
+
+    return code: RFC_FAILURE (1)
+    error group: 102
+    key: RFC_ERROR_COMMUNICATION
+
+**** Error file opened at 20180816 094745 Korea Standard Time Rel. 3.0.13 (2015-04-27) [721.619]
+Error:  >Thu Aug 16 09:47:45,294<    RfcException:
+    message: Connect to message server host failed
+Connection parameters: TYPE=B DEST=sap_destination MSHOST=114.70.3.46 R3NAME=USP GROUP=PUBLIC_GUI PCS=1
+
+LOCATION    CPIC (TCP/IP) on local host INFRA-02 with Unicode
+ERROR       service '?' unknown
+TIME        Thu Aug 16 09:47:45 2018
+RELEASE     721
+COMPONENT   NI (network interface)
+VERSION     40
+RC          -3
+DETAIL      NiErrSet
+COUNTER     2
+
+    return code: RFC_FAILURE (1)
+    error group: 102
+    key: RFC_ERROR_COMMUNICATION
+
+**** Error file opened at 20180816 104325 Korea Standard Time Rel. 3.0.13 (2015-04-27) [721.619]
+Error:  >Thu Aug 16 10:43:25,235<    RfcException:
+    message: Connect to message server host failed
+Connection parameters: TYPE=B DEST=sap_destination MSHOST=114.70.3.46 R3NAME=USP GROUP=PUBLIC_GUI PCS=1
+
+LOCATION    CPIC (TCP/IP) on local host INFRA-02 with Unicode
+ERROR       service '?' unknown
+TIME        Thu Aug 16 10:43:25 2018
+RELEASE     721
+COMPONENT   NI (network interface)
+VERSION     40
+RC          -3
+DETAIL      NiErrSet
+COUNTER     2
+
+    return code: RFC_FAILURE (1)
+    error group: 102
+    key: RFC_ERROR_COMMUNICATION
+
+**** Error file opened at 20180816 143922 Korea Standard Time Rel. 3.0.13 (2015-04-27) [721.619]
+Error:  >Thu Aug 16 14:39:22,964<    >RfcGetException rc (7) message: Client 100 is not available in this system
+<RfcGetException
+
