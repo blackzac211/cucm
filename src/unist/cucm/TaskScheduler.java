@@ -19,56 +19,45 @@ import unist.cucm.util.DBManager;
 import unist.cucm.util.EPDBManager;
 
 public class TaskScheduler extends TimerTask {
-	/**
-	 * 오전 9시부터 오후 10시까지 한시간 간격으로 실행
-	 */
+
 	@Override
 	public void run() {
 		udp_cucm2erp();
 	}
+	
+	private String getCurrentTime() {
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		return df.format(cal.getTime());
+	}
 
 	public void udp_cucm2erp() {
-		Calendar cal;
-		SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-
-		System.out.println("교환기 접속 시작!");
+		System.out.println(getCurrentTime() + " Try to connect to CUCM!");
 		AXLPortProvider provider = new AXLPortProvider();
-		System.out.println("교환기 접속 완료!");
+		System.out.println(getCurrentTime() + " Connected CUCM successfully!");
 
 		int result;
-		cal = Calendar.getInstance();
-		System.out.println("교환기 데이터 To mysql에 업데이트 시작");
+		System.out.println(getCurrentTime() + " Start updating devices of CUCM to mysql");
 
-		PhoneFunctions.updateDevicesYesterday();
+		result = PhoneFunctions.updateDevicesYesterday();
+		System.out.println(getCurrentTime() + " updateDevicesYesterday(): " + result);
 		result = PhoneFunctions.updateAllDeviceIntoDB(provider);
-		PhoneFunctions.updateDevicesHistory();
+		System.out.println(getCurrentTime() + " updateAllDeviceIntoDB(): " + result);
+		result = PhoneFunctions.updateDevicesHistory();
+		System.out.println(getCurrentTime() + " updateDevicesHistory(): " + result);
 		
-		
-		System.out.println(df.format(cal.getTime()) + ", All of devices are updated: " + result);
-
-		cal = Calendar.getInstance();
 		result = updateUserInfo();
-		System.out.println(df.format(cal.getTime()) + ", All of member are syncronized: " + result);
+		System.out.println(getCurrentTime() + " updateUserInfo(): " + result);
 
-		cal = Calendar.getInstance();
 
 		HashMap<String, Integer> resultMap;
 		resultMap = updateExtensionNumberOfERP();
-		System.out.println(df.format(cal.getTime()) + ", Extention number is updated, succ=" + resultMap.get("succ")
+		System.out.println(getCurrentTime() + ", updateExtensionNumberOfERP(): " + resultMap.get("succ")
 				+ ", noChanges=" + resultMap.get("fail"));
 
-		cal = Calendar.getInstance();
 		result = PhoneFunctions.updateAssociatedDevices(provider);
-		System.out.println(df.format(cal.getTime()) + ", All of user are associated with the devices: " + result);
+		System.out.println(getCurrentTime() + " updateAssociatedDevices(): " + result);
 
-	}
-
-	public void executeTask() {
-		try {
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	private int updateUserInfo() {
@@ -99,8 +88,7 @@ public class TaskScheduler extends TimerTask {
 				pstmt.setString(3, epRS.getString("DEPT"));
 				pstmt.setString(4, epRS.getString("DEPTNAME"));
 				pstmt.setString(5, epRS.getString("ERPID"));
-				pstmt.execute();
-				count++;
+				count += pstmt.executeUpdate();
 			}
 			epRS.close();
 			epPSTMT.close();
