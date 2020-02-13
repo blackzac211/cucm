@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.cisco.axl.api._11.GetPhoneReq;
@@ -14,14 +15,18 @@ import com.cisco.axl.api._11.ListPhoneRes;
 import com.cisco.axl.api._11.RPhoneLine;
 import com.cisco.axl.api._11.UpdateUserReq;
 
+import unist.cucm.ris.RisPortDAO;
+import unist.cucm.util.CommonUtility;
 import unist.cucm.util.DBManager;
 
 public class PhoneFunctions {
 
 	// 교환기 디바이스 데이터 Mysql DB에 저장
 	public static int updateAllDeviceIntoDB(AXLPortProvider provider) {
-
 		try {
+			RisPortDAO risPort = new RisPortDAO();
+			HashMap<String, String> ipMap = risPort.getAllDevicesWithIp();
+			
 			ListPhoneReq req = new ListPhoneReq();
 			ListPhoneReq.SearchCriteria sc = new ListPhoneReq.SearchCriteria();
 			sc.setName("%%");
@@ -35,7 +40,7 @@ public class PhoneFunctions {
 
 			PreparedStatement truncatePstmt = db.getPreparedStatement(truncateSql);
 			int reulst = truncatePstmt.executeUpdate();
-			System.out.println("execute TRUNCATE devices: " + reulst);
+			CommonUtility.writeLog("execute TRUNCATE devices: " + reulst);
 			
 			int count = 0;
 			int updateCnt = 0;
@@ -51,7 +56,7 @@ public class PhoneFunctions {
 						LPhone phone = list.get(i);
 
 						String sql = "INSERT INTO DEVICES(PRODUCT_TYPE, DEVICE_NAME, DESCRIPTION, OWNER_ID, DIGEST_ID, "
-								+ "DIR_NUM1, DIR_NUM2, DIR_NUM3, REG_DATE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, SYSDATE())";
+								+ "DIR_NUM1, DIR_NUM2, DIR_NUM3, IP, REG_DATE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, SYSDATE())";
 						PreparedStatement pstmt = db.getPreparedStatement(sql);
 						int idx = 1;
 						pstmt.setString(idx++, phone.getProduct());
@@ -77,28 +82,11 @@ public class PhoneFunctions {
 						for (; idx <= 8; idx++) {
 							pstmt.setString(idx, "");
 						}
-
-						/* nacan Test multi row insert
-						String Stdsql = "VALUES";
-						String valStart = "";
-						if (idx > 1) {
-							valStart = ", (";
-						} else {
-							valStart = "(";
-						}
-						String valEnd = ")";
-
-// PRODUCT_TYPE, DEVICE_NAME, DESCRIPTION, OWNER_ID, DIGEST_ID, DIR_NUM1, DIR_NUM2, DIR_NUM3, REG_DATE 		
-						String multiValsql = valStart + phone.getProduct() + "," + phone.getName() + ","
-								+ phone.getDescription() + "," + phone.getOwnerUserName().getValue() + ","
-								+ phoneRes.getReturn().getPhone().getDigestUser() + "," + tmpDirno + "," + "" + "," + ""
-								+ "," + "SYSDATE()" + valEnd;
-						System.out.println(multiValsql);
-
-						*/
-
+						// IP 입력
+						pstmt.setString(idx, ipMap.get(phone.getName()));
+						
 						updateCnt += pstmt.executeUpdate();
-
+						
 					} catch (Exception e) {
 						System.out.println("device insert error: " + e.getMessage());
 					}
@@ -173,7 +161,7 @@ public class PhoneFunctions {
 				try {
 					provider.getAxlPort().updateUser(updateReq);
 				} catch (Exception ex) {
-					System.out.println("Failed: " + userId + ", Error Msg: " + ex.getMessage());
+					CommonUtility.writeLog("updateAssociatedDevices(): Failed: " + userId + ", Error Msg: " + ex.getMessage());
 				}
 				count++;
 			}
@@ -188,17 +176,30 @@ public class PhoneFunctions {
 	public static int updateDevicesHistory() {
 		try {
 			DBManager db = new DBManager();
-			String sql = "INSERT INTO devices_history " + "SELECT product_type,  " + "       device_name,  "
-					+ "       description,  " + "       owner_id,  " + "       digest_id,  " + "       dir_num1,  "
-					+ "       dir_num2,  " + "       dir_num3,  " + "       reg_date  " + "FROM   (SELECT A.*,  "
-					+ "               B.device_name chk  " + "        FROM   `devices` A  "
-					+ "               LEFT OUTER JOIN `devices_yesterday` B  "
-					+ "                            ON A.device_name = B.device_name  "
-					+ "                               AND A.description = B.description  "
-					+ "                               AND A.owner_id = B.owner_id  "
-					+ "                               AND A.dir_num1 = B.dir_num1) AA WHERE  chk IS NULL ";
+			// 어제와 오늘을 비교해서 추가되거나 수정된 것을 히스토리에 저장
+			String sql = "INSERT INTO devices_history " + 
+					"SELECT product_type, device_name, description, owner_id, digest_id, dir_num1, dir_num2, dir_num3, ip, reg_date " + 
+					"FROM   (SELECT A.*, B.device_name chk " + 
+					"        FROM   devices A " + 
+					"        LEFT OUTER JOIN devices_yesterday B " + 
+					"             ON A.device_name = B.device_name " + 
+					"             AND A.description = B.description " + 
+					"             AND A.owner_id = B.owner_id " + 
+					"             AND A.digest_id = B.digest_id " + 
+					"             AND A.dir_num1 = B.dir_num1" + 
+					"             AND A.ip=B.ip) AA " + 
+					"WHERE chk IS NULL";
 			PreparedStatement pstmt = db.getPreparedStatement(sql);
-			return pstmt.executeUpdate();
+			pstmt.executeUpdate();
+			
+			// 삭제된 것을 히스토리에 저장
+			sql = "INSERT INTO devices_history " + 
+					"SELECT product_type, device_name, concat('Removed: ',description) as description, owner_id, digest_id, dir_num1, dir_num2, dir_num3, ip, NOW() as reg_date" + 
+					"FROM devices_yesterday WHERE device_name not in (select device_name from devices)";
+			
+			pstmt = db.getPreparedStatement(sql);
+			pstmt.executeUpdate();
+			return 1;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return -1;

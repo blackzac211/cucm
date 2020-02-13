@@ -3,7 +3,6 @@ package unist.cucm.ris;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -12,17 +11,10 @@ import java.util.List;
 
 import javax.xml.ws.BindingProvider;
 
-import com.cisco.axl.api._11.GetPhoneReq;
-import com.cisco.axl.api._11.GetPhoneRes;
-import com.cisco.axl.api._11.LPhone;
-import com.cisco.axl.api._11.ListPhoneRes;
-import com.cisco.axl.api._11.RPhoneLine;
-import com.cisco.schemas.ast.soap.ArrayOfCmDevSingleLineStatus;
 import com.cisco.schemas.ast.soap.ArrayOfCmDevice;
 import com.cisco.schemas.ast.soap.ArrayOfCmNode;
 import com.cisco.schemas.ast.soap.ArrayOfIPAddressArrayType;
 import com.cisco.schemas.ast.soap.ArrayOfSelectItem;
-import com.cisco.schemas.ast.soap.CmDevSingleLineStatus;
 import com.cisco.schemas.ast.soap.CmDevice;
 import com.cisco.schemas.ast.soap.CmNode;
 import com.cisco.schemas.ast.soap.CmSelectBy;
@@ -45,6 +37,9 @@ public class RisPortDAO {
 	private RISService70 risportService = new RISService70();
 	private RisPortType risportPort = risportService.getRisPort70();
 	private String hostUrl = "https://unuc-cucm-01.unist.ac.kr:8443/realtimeservice2/services/RISService70";
+	private String cucmId = "administrator";
+	private String cucmPwd = "Unist@IPT";
+	
 	private long maxNum = 1000;
 	private HashMap<String, Long> modelNum = new HashMap<>();
 	
@@ -52,7 +47,7 @@ public class RisPortDAO {
 	private ArrayOfSelectItem items = new ArrayOfSelectItem();
 	private SelectItem item = new SelectItem();
 	
-    public RisPortDAO(String cucmId, String cucmPwd) {
+    public RisPortDAO() {
     	((BindingProvider) risportPort).getRequestContext().put(
 	            BindingProvider.ENDPOINT_ADDRESS_PROPERTY, hostUrl);
 	    ((BindingProvider) risportPort).getRequestContext().put(
@@ -110,7 +105,44 @@ public class RisPortDAO {
     		return false;
     	}
     }
-	
+    
+    public HashMap<String, String> getAllDevicesWithIp() {
+    	ArrayList<Long> list = new ArrayList<>();
+    	list.add(modelNum.get("Any"));
+    	HashMap<String, String> map = new HashMap<>();
+    	
+	    for(int i = 0; i < list.size(); i++) {
+	    	sc.setModel(list.get(i));
+	    	
+		    // make selectCmDevice request
+		    SelectCmDeviceReturn selectReturn = risportPort.selectCmDevice("", sc);
+		    SelectCmDeviceResult selectResult = selectReturn.getSelectCmDeviceResult();
+		    
+		    ArrayOfCmNode arrayCmNode = selectResult.getCmNodes();
+		    
+		    if(arrayCmNode == null) {
+		    	continue;
+		    }
+		    List<CmNode> cmNodeList = arrayCmNode.getItem();
+		    
+		    for(int j = 0; j < cmNodeList.size(); j++) {
+		    	ArrayOfCmDevice arrCmDevice = cmNodeList.get(j).getCmDevices();
+		    	if(arrCmDevice == null) {
+		    		continue;
+		    	}
+		    	List<CmDevice> listCmDevice = arrCmDevice.getItem();
+		    	
+		    	for(int k = 0; k < listCmDevice.size(); k++) {
+		    		ArrayOfIPAddressArrayType arrIPAddr = listCmDevice.get(k).getIPAddress();
+		    		List<IPAddressArrayType> listIPArr = arrIPAddr.getItem();
+		    		
+		    		map.put(listCmDevice.get(k).getName(), listIPArr.get(0).getIP());
+		    	}
+		    }
+	    }
+	    return map;
+    }
+    
 	public void searchUnactivityDevices() {
 		ArrayList<Long> list = new ArrayList<>();
 		list.add(modelNum.get("8845"));
@@ -339,7 +371,7 @@ public class RisPortDAO {
 	    		// if(!ip.startsWith("10.52")) {
 	    		// if(status.equalsIgnoreCase("UN_REGISTERED")) {
 	    		if(listCmDevice.get(j).getStatusReason() == 13) {
-	    			// System.out.println("Name: " + listCmDevice.get(j).getName());
+	    			System.out.println("Name: " + listCmDevice.get(j).getName());
 	    			// System.out.println(("Status: " + listCmDevice.get(j).getStatus()));
 	    			System.out.println(listIPArr.get(0).getIP() + "---" + listCmDevice.get(j).getDescription());
 	    			// System.out.println("Status: " + listCmDevice.get(j).getStatus());

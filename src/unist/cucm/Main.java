@@ -1,22 +1,20 @@
 package unist.cucm;
 
-import java.util.Calendar;
-import java.util.Timer;
-
 public class Main {
 	public static void main(String[] args) {
 		TaskScheduler task = new TaskScheduler();
 		
-		// task.udp_cucm2erp();		// 즉시 실행
+		task.task();		// 즉시 실행
 		
+		/*
 		Timer timer = new Timer();
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.HOUR_OF_DAY, 2);  //새벽2시 마다 하루에 1회 
 		cal.set(Calendar.MINUTE, 0);
 		cal.set(Calendar.SECOND, 0);
 		
-		timer.scheduleAtFixedRate(task, cal.getTime(), 1000 * 60 * 60 * 24);	// 일 배치 스케쥴러 1일 
-	
+		timer.scheduleAtFixedRate(new TaskScheduler(), cal.getTime(), 1000 * 60 * 60 * 24);	// 일 배치 스케쥴러 1일 
+		*/
 		
 		// AXLPortProvider provider = new AXLPortProvider();
 		
@@ -75,7 +73,5 @@ public class Main {
 		
 		// 교환기에 등록된 디바이스 삭제
 		// phoneAXLPortDAO.removePhone("Jabber");
-		
-		System.out.println("End");
 	}
 }

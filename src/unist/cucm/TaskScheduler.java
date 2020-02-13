@@ -2,8 +2,6 @@ package unist.cucm;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.TimerTask;
 
@@ -15,6 +13,7 @@ import unist.cucm.axl.PhoneFunctions;
 import unist.cucm.sap.UnistConfiguration;
 import unist.cucm.sap.functions.extension.ExtensionNumClient;
 import unist.cucm.sap.functions.extension.model.ExtensionNum;
+import unist.cucm.util.CommonUtility;
 import unist.cucm.util.DBManager;
 import unist.cucm.util.EPDBManager;
 
@@ -22,41 +21,37 @@ public class TaskScheduler extends TimerTask {
 
 	@Override
 	public void run() {
-		udp_cucm2erp();
-	}
-	
-	private String getCurrentTime() {
-		Calendar cal = Calendar.getInstance();
-		SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		return df.format(cal.getTime());
+		task();
 	}
 
-	public void udp_cucm2erp() {
-		System.out.println(getCurrentTime() + " Try to connect to CUCM!");
+	public void task() {
+		CommonUtility.writeLog("Try to connect to CUCM!");
 		AXLPortProvider provider = new AXLPortProvider();
-		System.out.println(getCurrentTime() + " Connected CUCM successfully!");
+		CommonUtility.writeLog("Connected CUCM successfully!");
 
 		int result;
-		System.out.println(getCurrentTime() + " Start updating devices of CUCM to mysql");
+		CommonUtility.writeLog("Start updating devices of CUCM to mysql");
 
 		result = PhoneFunctions.updateDevicesYesterday();
-		System.out.println(getCurrentTime() + " updateDevicesYesterday(): " + result);
+		CommonUtility.writeLog("updateDevicesYesterday(): " + result);
+		
 		result = PhoneFunctions.updateAllDeviceIntoDB(provider);
-		System.out.println(getCurrentTime() + " updateAllDeviceIntoDB(): " + result);
+		CommonUtility.writeLog("updateAllDeviceIntoDB(): " + result);
+		
 		result = PhoneFunctions.updateDevicesHistory();
-		System.out.println(getCurrentTime() + " updateDevicesHistory(): " + result);
+		CommonUtility.writeLog("updateDevicesHistory(): " + result);
 		
 		result = updateUserInfo();
-		System.out.println(getCurrentTime() + " updateUserInfo(): " + result);
+		CommonUtility.writeLog("updateUserInfo(): " + result);
 
 
 		HashMap<String, Integer> resultMap;
 		resultMap = updateExtensionNumberOfERP();
-		System.out.println(getCurrentTime() + ", updateExtensionNumberOfERP(): " + resultMap.get("succ")
+		CommonUtility.writeLog("updateExtensionNumberOfERP(): " + resultMap.get("succ")
 				+ ", noChanges=" + resultMap.get("fail"));
 
 		result = PhoneFunctions.updateAssociatedDevices(provider);
-		System.out.println(getCurrentTime() + " updateAssociatedDevices(): " + result);
+		CommonUtility.writeLog("updateAssociatedDevices(): " + result);
 
 	}
 
