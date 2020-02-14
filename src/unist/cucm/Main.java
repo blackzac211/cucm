@@ -1,10 +1,30 @@
 package unist.cucm;
 
+
 public class Main {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		TaskScheduler task = new TaskScheduler();
 		
 		task.task();		// 즉시 실행
+		
+		/*
+		DBManager db = new DBManager();
+		String sql = "SELECT device_name FROM devices";
+		PreparedStatement pstmt = db.getPreparedStatement(sql);
+		ResultSet rs = pstmt.executeQuery();
+		String deviceName;
+		String ip;
+		RisPortDAO ris = new RisPortDAO();
+		while(rs.next()) {
+			deviceName = rs.getString("device_name");
+			ip = ris.getIpByDeviceName(deviceName);
+			sql = "UPDATE devices SET ip=? WHERE device_name=?";
+			pstmt = db.getPreparedStatement(sql);
+			pstmt.setString(1, ip);
+			pstmt.setString(2, deviceName);
+			pstmt.execute();
+		}
+		*/
 		
 		/*
 		Timer timer = new Timer();

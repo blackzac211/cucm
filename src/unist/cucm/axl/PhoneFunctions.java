@@ -25,13 +25,13 @@ public class PhoneFunctions {
 	public static int updateAllDeviceIntoDB(AXLPortProvider provider) {
 		try {
 			RisPortDAO risPort = new RisPortDAO();
-			HashMap<String, String> ipMap = risPort.getAllDevicesWithIp();
+			HashMap<String, String> map = risPort.getAllDevicesWithIp();
 			
 			ListPhoneReq req = new ListPhoneReq();
 			ListPhoneReq.SearchCriteria sc = new ListPhoneReq.SearchCriteria();
 			sc.setName("%%");
 			req.setSearchCriteria(sc);
-
+			
 			final int bigInt = 500; // 한번에 가져올 데이터 수
 			req.setFirst(BigInteger.valueOf(bigInt));
 
@@ -44,6 +44,7 @@ public class PhoneFunctions {
 			
 			int count = 0;
 			int updateCnt = 0;
+			String ipAddr;
 			while (true) {
 				req.setSkip(BigInteger.valueOf(bigInt * count++));
 				ListPhoneRes res = provider.getAxlPort().listPhone(req);
@@ -56,7 +57,7 @@ public class PhoneFunctions {
 						LPhone phone = list.get(i);
 
 						String sql = "INSERT INTO DEVICES(PRODUCT_TYPE, DEVICE_NAME, DESCRIPTION, OWNER_ID, DIGEST_ID, "
-								+ "DIR_NUM1, DIR_NUM2, DIR_NUM3, IP, REG_DATE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, SYSDATE())";
+								+ "DIR_NUM1, DIR_NUM2, DIR_NUM3, IP, REG_DATE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, SYSDATE())";
 						PreparedStatement pstmt = db.getPreparedStatement(sql);
 						int idx = 1;
 						pstmt.setString(idx++, phone.getProduct());
@@ -83,12 +84,14 @@ public class PhoneFunctions {
 							pstmt.setString(idx, "");
 						}
 						// IP 입력
-						pstmt.setString(idx, ipMap.get(phone.getName()));
+						// pstmt.setString(idx, risPort.getIpByDeviceName(phone.getName()));
+						ipAddr = (map.get(phone.getName()) == null) ? "" : map.get(phone.getName());
+						pstmt.setString(idx, ipAddr);
 						
 						updateCnt += pstmt.executeUpdate();
 						
-					} catch (Exception e) {
-						System.out.println("device insert error: " + e.getMessage());
+					} catch(Exception e) {
+						e.printStackTrace();
 					}
 				}
 			}
@@ -194,7 +197,7 @@ public class PhoneFunctions {
 			
 			// 삭제된 것을 히스토리에 저장
 			sql = "INSERT INTO devices_history " + 
-					"SELECT product_type, device_name, concat('Removed: ',description) as description, owner_id, digest_id, dir_num1, dir_num2, dir_num3, ip, NOW() as reg_date" + 
+					"SELECT product_type, device_name, concat('Removed: ',description) as description, owner_id, digest_id, dir_num1, dir_num2, dir_num3, ip, NOW() as reg_date " + 
 					"FROM devices_yesterday WHERE device_name not in (select device_name from devices)";
 			
 			pstmt = db.getPreparedStatement(sql);

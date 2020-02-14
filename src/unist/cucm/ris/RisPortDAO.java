@@ -7,7 +7,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.ws.BindingProvider;
 
@@ -55,10 +57,12 @@ public class RisPortDAO {
 	    ((BindingProvider) risportPort).getRequestContext().put(
 	            BindingProvider.PASSWORD_PROPERTY, cucmPwd);
 	    
-	    modelNum.put("Any", (long)255);
+	    // modelNum.put("Any", (long)255);
+	    modelNum.put("6901", (long)547);
+	    modelNum.put("7811", (long)36213);
+	    modelNum.put("7841", (long)622);
 	    modelNum.put("8845", (long)36224);
 	    modelNum.put("8865", (long)36225);
-	    modelNum.put("7811", (long)36213);
 	    modelNum.put("ThirdParty", (long)336);
 	    modelNum.put("DX80", (long)36239);
 	    modelNum.put("Fax", (long)681);
@@ -107,12 +111,19 @@ public class RisPortDAO {
     }
     
     public HashMap<String, String> getAllDevicesWithIp() {
+    	/*
     	ArrayList<Long> list = new ArrayList<>();
-    	list.add(modelNum.get("Any"));
+    	list.add(modelNum.get("8845"));
+		list.add(modelNum.get("8865"));
+		list.add(modelNum.get("7811"));
+    	*/
     	HashMap<String, String> map = new HashMap<>();
     	
-	    for(int i = 0; i < list.size(); i++) {
-	    	sc.setModel(list.get(i));
+    	Set<String> key = modelNum.keySet();
+    	Iterator<String> itr = key.iterator();
+    	while(itr.hasNext()) {
+	    // for(int i = 0; i < modelNum.size(); i++) {
+	    	sc.setModel(modelNum.get(itr.next()));
 	    	
 		    // make selectCmDevice request
 		    SelectCmDeviceReturn selectReturn = risportPort.selectCmDevice("", sc);
@@ -141,6 +152,43 @@ public class RisPortDAO {
 		    }
 	    }
 	    return map;
+    }
+    
+    public String getIpByDeviceName(String deviceName) throws Exception {
+    	item.setItem(deviceName);
+	    items.getItem().add(item);
+	    
+	    sc.setModel(modelNum.get("Any"));
+	    	
+		// make selectCmDevice request
+		SelectCmDeviceReturn selectReturn = risportPort.selectCmDevice("", sc);
+		SelectCmDeviceResult selectResult = selectReturn.getSelectCmDeviceResult();
+		    
+		ArrayOfCmNode arrayCmNode = selectResult.getCmNodes();
+		    
+		if(arrayCmNode == null) {
+			return "";
+		}
+		List<CmNode> cmNodeList = arrayCmNode.getItem();
+
+		String ipAddr = null;
+		for(int j = 0; j < cmNodeList.size(); j++) {
+			ArrayOfCmDevice arrCmDevice = cmNodeList.get(j).getCmDevices();
+		    if(arrCmDevice == null) {
+		    	continue;
+		    }
+		    List<CmDevice> listCmDevice = arrCmDevice.getItem();
+
+		    for(int k = 0; k < listCmDevice.size(); k++) {
+		    	ArrayOfIPAddressArrayType arrIPAddr = listCmDevice.get(k).getIPAddress();
+		    	List<IPAddressArrayType> listIPArr = arrIPAddr.getItem();
+		    	ipAddr = listIPArr.get(0).getIP();
+		    	if(ipAddr != null && !ipAddr.equals("")) {
+		    		return ipAddr;
+		    	}
+		    }
+	    }
+	    return "";
     }
     
 	public void searchUnactivityDevices() {
