@@ -116,9 +116,8 @@ public class LDAPManager {
 
 			ctx.modifyAttributes(dn, mods);			
 		} catch(Exception e) {
-			e.printStackTrace();
-			// CommonUtility.writeLog(e.getMessage());
-			// CommonUtility.writeLog("Error: modifyUser()");
+			CommonUtility.writeLog(e.getMessage());
+			CommonUtility.writeLog("Error: modifyExtensionById()");
 		}
 	}
 	
