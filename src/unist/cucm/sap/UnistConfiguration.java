@@ -15,7 +15,7 @@ public class UnistConfiguration {
 
         if (!Environment.isDestinationDataProviderRegistered()) {
             Environment.registerDestinationDataProvider(provider);
-
+            
             SapConnector sapConnector = new FileSapConnector("/unist/cucm/sap/properties/sap.properties");
             provider.addDestination("sap_destination", sapConnector);
 

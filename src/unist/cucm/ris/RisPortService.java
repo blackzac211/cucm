@@ -35,7 +35,7 @@ import unist.cucm.util.DBManager;
 import unist.cucm.util.ExcelManager;
 
 
-public class RisPortDAO {
+public class RisPortService {
 	private RISService70 risportService = new RISService70();
 	private RisPortType risportPort = risportService.getRisPort70();
 	private String hostUrl = "https://unuc-cucm-01.unist.ac.kr:8443/realtimeservice2/services/RISService70";
@@ -49,7 +49,7 @@ public class RisPortDAO {
 	private ArrayOfSelectItem items = new ArrayOfSelectItem();
 	private SelectItem item = new SelectItem();
 	
-    public RisPortDAO() {
+    public RisPortService() {
     	((BindingProvider) risportPort).getRequestContext().put(
 	            BindingProvider.ENDPOINT_ADDRESS_PROPERTY, hostUrl);
 	    ((BindingProvider) risportPort).getRequestContext().put(
@@ -111,12 +111,12 @@ public class RisPortDAO {
     }
     
     public HashMap<String, String> getAllDevicesWithIp() {
-    	/*
+    	
     	ArrayList<Long> list = new ArrayList<>();
     	list.add(modelNum.get("8845"));
 		list.add(modelNum.get("8865"));
 		list.add(modelNum.get("7811"));
-    	*/
+    	
     	HashMap<String, String> map = new HashMap<>();
     	
     	Set<String> key = modelNum.keySet();
@@ -147,7 +147,9 @@ public class RisPortDAO {
 		    		ArrayOfIPAddressArrayType arrIPAddr = listCmDevice.get(k).getIPAddress();
 		    		List<IPAddressArrayType> listIPArr = arrIPAddr.getItem();
 		    		
-		    		map.put(listCmDevice.get(k).getName(), listIPArr.get(0).getIP());
+		    		if(listIPArr.size() > 0) {
+		    			map.put(listCmDevice.get(k).getName(), listIPArr.get(0).getIP());
+		    		}
 		    	}
 		    }
 	    }

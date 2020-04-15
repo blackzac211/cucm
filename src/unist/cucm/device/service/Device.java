@@ -1,6 +1,6 @@
-package unist.cucm;
+package unist.cucm.device.service;
 
-public class Devices {
+public class Device {
 	private String product_type;
 	private String device_name;
 	private String description;
